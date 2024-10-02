@@ -1,5 +1,3 @@
-// src/components/Inferences.js
-
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
@@ -45,12 +43,12 @@ const generateInferences = (data, filters) => {
     const ageInference = generateAgeGroupInference(data, filters.ageGroup);
     if (ageInference) inferences.push(ageInference);
   }
-  if (filters.educationLevel) {
-    const educationInference = generateEducationLevelInference(data, filters.educationLevel);
+  if (filters.education) {
+    const educationInference = generateEducationLevelInference(data, filters.education);
     if (educationInference) inferences.push(educationInference);
   }
-  if (filters.occupation) {
-    const occupationInference = generateOccupationInference(data, filters.occupation);
+  if (filters.gender) {
+    const occupationInference = generateOccupationInference(data, filters.gender);
     if (occupationInference) inferences.push(occupationInference);
   }
   if (filters.location) {
@@ -95,7 +93,7 @@ const generateAgeGroupInference = (data, ageGroup) => {
   };
 };
 
-const generateEducationLevelInference = (data, educationLevel) => {
+const generateEducationLevelInference = (data, education) => {
   if (data.length === 0) {
     return null;
   }
@@ -122,12 +120,12 @@ const generateEducationLevelInference = (data, educationLevel) => {
   const percentage = ((count / total) * 100).toFixed(1);
 
   return {
-    title: `Perception among ${educationLevel} Educated Respondents`,
-    text: `${percentage}% of respondents with "${educationLevel}" education believe that emotional/psychological abuse is "${mostCommonResponse.toLowerCase()}" as physical violence.`,
+    title: `Perception among ${education} Educated Respondents`,
+    text: `${percentage}% of respondents with "${education}" education believe that emotional/psychological abuse is "${mostCommonResponse.toLowerCase()}" as physical violence.`,
   };
 };
 
-const generateOccupationInference = (data, occupation) => {
+const generateOccupationInference = (data, gender) => {
   if (data.length === 0) {
     return null;
   }
@@ -151,8 +149,8 @@ const generateOccupationInference = (data, occupation) => {
   const participationRate = ((counts['Yes'] / total) * 100).toFixed(1);
 
   return {
-    title: `Participation in Initiatives by ${occupation}`,
-    text: `${participationRate}% of respondents who are "${occupation}" have participated in initiatives aimed at preventing violence against women.`,
+    title: `Participation in Initiatives by ${gender}`,
+    text: `${participationRate}% of respondents who are "${gender}" have participated in initiatives aimed at preventing violence against women.`,
   };
 };
 

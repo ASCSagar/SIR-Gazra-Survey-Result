@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const Visualization = ({ data }) => {
+const Visualization = ({ data, selectedQuestion }) => {
   const questions = [
     'Are you familiar with the term "violence against women"?',
     "Have you ever witnessed or experienced any form of violence against women?",
@@ -45,11 +45,11 @@ const Visualization = ({ data }) => {
                   <YAxis allowDecimals={false} />
                   <Tooltip />
                   <Legend />
-                  <Bar 
+                  <Bar
                     barSize={100}
-                    dataKey="count" 
+                    dataKey="count"
                     strokeWidth={1}
-                    fill="rgba(153, 102, 255, 0.6)" 
+                    fill="rgba(153, 102, 255, 0.6)"
                     stroke="rgba(153, 102, 255, 1)"
                   />
                 </BarChart>
