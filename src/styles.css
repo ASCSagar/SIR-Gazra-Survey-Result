@@ -1,0 +1,26 @@
+/* src/styles.css */
+
+.app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .filters select {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px;
+  }
+  
