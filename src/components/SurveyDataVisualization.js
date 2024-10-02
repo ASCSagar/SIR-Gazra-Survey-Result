@@ -1,108 +1,170 @@
 import React, { useEffect, useState } from "react";
-import Filters from "./Filters";
-import Inferences from "./Inferences";
+import Filters from "./Filters/Filters";
+import Inferences from "./Inferences/Inferences";
 import sampleData from "../sampleData";
-import Visualization from "./Visualization";
-import { AppBar, Toolbar, Typography, Container } from "@mui/material";
+import Visualization from "./Visualization/Visualization";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Box,
+  Container,
+  useTheme,
+  Paper,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { initialQuestions } from "./Questions/Questions";
 
 const SurveyDataVisualization = () => {
+  const [filteredData, setFilteredData] = useState(sampleData);
   const [filters, setFilters] = useState({
     ageGroup: "",
-    educationLevel: "",
-    occupation: "",
+    education: "",
+    gender: "",
     location: "",
   });
 
-  // For sample data
-  const [filteredData, setFilteredData] = useState(sampleData);
+  const theme = useTheme();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-  // Uncomment the following when integrating API
-  /*
-      const [surveyData, setSurveyData] = useState([]);
-      const [filteredData, setFilteredData] = useState([]);
-      const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(false);
-    
-      // Fetch data from the Django REST API
-      useEffect(() => {
-        axios
-          .get('http://localhost:8000/api/survey-data/') // Replace with your API endpoint
-          .then((response) => {
-            setSurveyData(response.data);
-            setFilteredData(response.data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error('Error fetching data:', error);
-            setError(true);
-            setLoading(false);
-          });
-      }, []);
-      */
+  const handleDrawerToggle = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
 
-  // Update filtered data whenever filters change
-  useEffect(() => {
-    let data = sampleData;
+  const handleQuestionSelect = (question) => {
+    setSelectedQuestion(question);
+    setIsDrawerOpen(false);
+  };
 
-    if (filters.ageGroup) {
-      data = data.filter((item) => item.ageGroup === filters.ageGroup);
-    }
-    if (filters.educationLevel) {
-      data = data.filter(
-        (item) => item.educationLevel === filters.educationLevel
-      );
-    }
-    if (filters.occupation) {
-      data = data.filter((item) => item.occupation === filters.occupation);
-    }
-    if (filters.location) {
-      data = data.filter((item) => item.location === filters.location);
-    }
+  const drawerWidth = 440;
 
-    setFilteredData(data);
-  }, [filters]);
-
-  // For sample data, we don't need loading and error states
-  // When integrating API, uncomment the following
-  /*
-      if (loading) {
-        return <div>Loading data, please wait...</div>;
-      }
-    
-      if (error) {
-        return <div>Error loading data. Please try again later.</div>;
-      }
-      */
+  const drawerContent = (
+    <div>
+      <Toolbar />
+      <List>
+        {initialQuestions.map((question) => (
+          <ListItem
+            key={question.id}
+            onClick={() => handleQuestionSelect(question)}
+            button
+          >
+            <ListItemText primary={question.title} />
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
 
   const resetFilters = () => {
     setFilters({
       ageGroup: "",
-      educationLevel: "",
-      occupation: "",
+      education: "",
+      gender: "",
       location: "",
     });
   };
 
+  useEffect(() => {
+    let data = sampleData;
+    if (filters.ageGroup) {
+      data = data.filter((item) => item.ageGroup === filters.ageGroup);
+    }
+    if (filters.education) {
+      data = data.filter((item) => item.education === filters.education);
+    }
+    if (filters.gender) {
+      data = data.filter((item) => item.gender === filters.gender);
+    }
+    if (filters.location) {
+      data = data.filter((item) => item.location === filters.location);
+    }
+    setFilteredData(data);
+  }, [filters]);
+
   return (
-    <>
-      <AppBar position="static">
+    <Box sx={{ display: "flex" }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          zIndex: theme.zIndex.drawer + 1,
+        }}
+      >
         <Toolbar>
-          <Typography variant="h6" component="div">
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
             Survey Data Visualization
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container sx={{ my: 4 }}>
-        <Filters
-          filters={filters}
-          setFilters={setFilters}
-          resetFilters={resetFilters}
-          filteredData={filteredData}
-        />
-        <Visualization data={filteredData} />
-        <Inferences data={filteredData} filters={filters} />
-      </Container>
-    </>
+      <Drawer
+        variant="temporary"
+        open={isDrawerOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: "none", sm: "block" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+        }}
+        open
+      >
+        {drawerContent}
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="md">
+          <Filters
+            filters={filters}
+            setFilters={setFilters}
+            resetFilters={resetFilters}
+          />
+          <Paper elevation={3} sx={{ p: 4, mt: 2, mb: 2 }}>
+            {selectedQuestion ? (
+              <Typography variant="h5" gutterBottom>
+                {selectedQuestion.title}
+              </Typography>
+            ) : (
+              <Typography variant="body1">
+                Please select a question from the sidebar.
+              </Typography>
+            )}
+          </Paper>
+          <Visualization data={filteredData} selectedQuestion={selectedQuestion} />
+          <Inferences data={filteredData} filters={filters} />
+        </Container>
+      </Box>
+    </Box>
   );
 };
 
